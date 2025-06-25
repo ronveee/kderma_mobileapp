@@ -58,10 +58,11 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildProfileHeader() {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundImage: NetworkImage('https://randomuser.me/api/portraits/women/43.jpg'),
-        ),
+       CircleAvatar(
+        radius: 40,
+        child: Icon(Icons.person, size: 40),
+        backgroundColor: Colors.grey[300],
+      ),
         SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
