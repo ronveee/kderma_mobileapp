@@ -1,125 +1,271 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Profile Screen',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.pink,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ProfileScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
+class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text('Your Profile'),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.pink[100],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: Container(
+        color: Colors.pink[50],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildProfileHeader(),
+              SizedBox(height: 24),
+              _buildStatsRow(),
+              SizedBox(height: 24),
+              _buildPersonalPreferencesSection(),
+              SizedBox(height: 24),
+              _buildChangePasswordButton(),
+              SizedBox(height: 24),
+              _buildPersonalInfoSection(),
+              SizedBox(height: 24),
+              _buildNotificationSettingsSection(),
+              SizedBox(height: 24),
+              _buildEditProfileButton(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader() {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 40,
+          backgroundImage: NetworkImage('https://randomuser.me/api/portraits/women/43.jpg'),
+        ),
+        SizedBox(width: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Daniel De Asis',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              'Client',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            Text(
+              'Member since 1/15/2024',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ],
     );
   }
+
+  Widget _buildStatsRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildStatItem('8', 'Appointments'),
+        _buildStatItem('2', 'Products'),
+        _buildStatItem('3', 'Services'),
+      ],
+    );
+  }
+
+  Widget _buildStatItem(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPersonalPreferencesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Personal Preferences',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 12),
+        _buildPreferenceItem(
+          title: 'Preferred Days',
+          values: ['Tuesday', 'Thursday'],
+        ),
+        SizedBox(height: 12),
+        _buildPreferenceItem(
+          title: 'Preferred Times',
+          values: ['Morning', 'Afternoon'],
+        ),
+        SizedBox(height: 12),
+        _buildPreferenceItem(
+          title: 'Favorite Treatments',
+          values: ['Advanced Facial Treatment', 'Anti-Aging Treatments'],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPreferenceItem({required String title, required List<String> values}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: 4),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: values.map((value) => Chip(
+            label: Text(value),
+            backgroundColor: Colors.pink[100],
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChangePasswordButton() {
+  return ElevatedButton(
+    onPressed: () {
+      // Handle change password
+    },
+    child: Text('Change Password'),
+    style: ElevatedButton.styleFrom(
+      minimumSize: Size(double.infinity, 50),
+      backgroundColor: Colors.pink[300],
+      foregroundColor: Colors.white, // This sets the text color
+    ),
+  );
+}
+
+  Widget _buildPersonalInfoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Personal Information',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 12),
+        _buildInfoItem('Full Name', 'Daniel De Asis'),
+        _buildInfoItem('Email Address', 'danieldeasis@gmail.com'),
+        _buildInfoItem('Phone Number', '(555) 123-4567'),
+        SizedBox(height: 12),
+        _buildInfoItem('Skin Type', 'Combination'),
+        _buildInfoItem('Skin Concerns', 'Fine Lines, Dryness, Sensitivity'),
+        _buildInfoItem('Allergies & Sensitivities', 'None reported'),
+      ],
+    );
+  }
+
+  Widget _buildInfoItem(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+          SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationSettingsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Notifications',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        Text(
+          'Notification Settings',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: 12),
+        _buildSwitchItem('Appointment Reminders', 'Get notified about upcoming appointments', true),
+        _buildSwitchItem('Text Notifications', 'Receive notifications via text message', true),
+        _buildSwitchItem('Promotional Emails', 'Receive emails about promotions and special offers', true),
+      ],
+    );
+  }
+
+  Widget _buildSwitchItem(String title, String subtitle, bool value) {
+    return SwitchListTile(
+      title: Text(title),
+      subtitle: Text(subtitle),
+      value: value,
+      onChanged: (bool newValue) {},
+    );
+  }
+
+  Widget _buildEditProfileButton(BuildContext context) {
+  return SizedBox(
+    width: double.infinity,
+    child: ElevatedButton(
+      onPressed: () {
+        // Handle edit profile
+      },
+      child: Text(
+        'Edit Profile',
+        style: TextStyle(
+          color: Colors.white, // White text color
+          fontSize: 16, // Optional: adjust font size
+          fontWeight: FontWeight.w600, // Optional: make text slightly bolder
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        backgroundColor: Colors.pink[300],
+        shape: RoundedRectangleBorder( // Optional: rounded corners
+          borderRadius: BorderRadius.circular(8),
+        ),
+        elevation: 2, // Optional: slight shadow
+      ),
+    ),
+  );
+}
 }
