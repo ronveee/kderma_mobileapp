@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'services.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,9 +13,20 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+        '/services': (context) => SkincareServicesSection(),
+      },
     );
   }
+}
+
+class NavItem {
+  final IconData icon;
+  final String label;
+
+  NavItem({required this.icon, required this.label});
 }
 
 class HomePage extends StatefulWidget {
@@ -23,11 +35,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1; // My Appointments is selected by default
+  int _selectedIndex = 0; // Profile selected by default
 
   final List<NavItem> _navItems = [
     NavItem(icon: Icons.person, label: 'Profile'),
     NavItem(icon: Icons.medical_services, label: 'Services'),
+  ];
+
+  final List<Widget> _pages = [
+    ProfilePage(),
+    SkincareServicesSection(),
   ];
 
   @override
@@ -40,13 +57,6 @@ class _HomePageState extends State<HomePage> {
             fontWeight: FontWeight.bold,
             fontSize: 24,
           ),
-        ),
-        
-      ),
-      body: Center(
-        child: Text(
-          'Content for ${_navItems[_selectedIndex].label}',
-          style: TextStyle(fontSize: 24),
         ),
       ),
       drawer: Drawer(
@@ -71,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                     leading: Icon(_navItems[index].icon),
                     title: Text(_navItems[index].label),
                     selected: index == _selectedIndex,
-                    selectedTileColor: Colors.blue.withOpacity(0.1),
+                    selectedTileColor: Colors.pink[50],
                     onTap: () {
                       setState(() {
                         _selectedIndex = index;
@@ -85,13 +95,21 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      body: _pages[_selectedIndex],
     );
   }
 }
 
-class NavItem {
-  final IconData icon;
-  final String label;
+class ProfilePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Profile Page'));
+  }
+}
 
-  NavItem({required this.icon, required this.label});
+class HomeContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Home Page'));
+  }
 }
