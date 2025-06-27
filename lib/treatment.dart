@@ -43,7 +43,7 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
       'date': 'August 10, 2025',
       'status': 'Completed',
       'type': 'Exfoliation',
-      'aesthetician': 'Ace Sinag'
+      'aesthetician': 'Ace Nathaniel Sinag'
     },
   ];
 
