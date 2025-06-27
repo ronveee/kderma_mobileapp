@@ -38,14 +38,45 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0; // Profile selected by default
 
   final List<NavItem> _navItems = [
+    NavItem(icon: Icons.dashboard, label: 'Dashboard'),
     NavItem(icon: Icons.person, label: 'Profile'),
     NavItem(icon: Icons.medical_services, label: 'Services'),
+    NavItem(icon: Icons.calendar_today, label: 'My Appointments'),
+    NavItem(icon: Icons.medical_services, label: 'Treatment History'),
   ];
 
   final List<Widget> _pages = [
-    ProfilePage(),
-    SkincareServicesSection(),
+    HomeContent(), // Dashboard
+    ProfilePage(), // Profile
+    SkincareServicesSection(), // Services
+    Center(child: Text('My Appointments')), // Placeholder
+    Center(child: Text('Treatment History')), // Placeholder
   ];
+
+  void _logout(BuildContext context) async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Logout'),
+        content: Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Logout'),
+          ),
+        ],
+      ),
+    );
+    if (shouldLogout == true) {
+      // TODO: Add your logout logic here (e.g., clear user session)
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      // If you have a login page, navigate to it here
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +122,12 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.logout, color: Colors.red),
+              title: Text('Logout', style: TextStyle(color: Colors.red)),
+              onTap: () => _logout(context),
             ),
           ],
         ),
