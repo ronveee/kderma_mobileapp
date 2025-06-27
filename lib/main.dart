@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'services.dart';
+import 'package:kderma_mobileapp/treatment.dart';
+import 'package:kderma_mobileapp/services.dart' as services;
 
 void main() {
   runApp(MyApp());
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/services': (context) => SkincareServicesSection(),
+        '/services': (context) => services.SkincareServicesSection(),
+        '/treatment': (context) => TreatmentTimelineSection(),
       },
     );
   }
@@ -35,7 +37,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Profile selected by default
+  int _selectedIndex = 0;
 
   final List<NavItem> _navItems = [
     NavItem(icon: Icons.dashboard, label: 'Dashboard'),
@@ -48,9 +50,9 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     HomeContent(), // Dashboard
     ProfilePage(), // Profile
-    SkincareServicesSection(), // Services
-    Center(child: Text('My Appointments')), // Placeholder
-    Center(child: Text('Treatment History')), // Placeholder
+    services.SkincareServicesSection(), // Services
+    Center(child: Text('My Appointments')), // My Appointments
+    TreatmentTimelineSection(), // Treatment History
   ];
 
   void _logout(BuildContext context) async {
@@ -72,9 +74,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     if (shouldLogout == true) {
-      // TODO: Add your logout logic here (e.g., clear user session)
       Navigator.of(context).popUntil((route) => route.isFirst);
-      // If you have a login page, navigate to it here
     }
   }
 
