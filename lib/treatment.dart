@@ -1,52 +1,112 @@
 import 'package:flutter/material.dart';
+// ...existing code...
 
-// Add these placeholder classes if not already defined elsewhere
-class NavItem {
-  final IconData icon;
-  final String label;
-  NavItem({required this.icon, required this.label});
-}
-
-class HomeContent extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Home Page'));
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Profile Page'));
-  }
-}
-
-class SkincareServicesSection extends StatelessWidget {
-  const SkincareServicesSection({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Skincare Services'));
-  }
-}
-
-class TreatmentTimelineSection extends StatelessWidget {
+class TreatmentTimelineSection extends StatefulWidget {
   const TreatmentTimelineSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final treatments = [
-      {
-        'treatmentName': 'Facial Treatment',
-        'date': 'June 27, 2025',
-        'status': 'Completed',
-      },
-      {
-        'treatmentName': 'Acne Therapy',
-        'date': 'July 5, 2025',
-        'status': 'Scheduled',
-      },
-    ];
+  _TreatmentTimelineSectionState createState() => _TreatmentTimelineSectionState();
+}
 
+class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
+  final List<Map<String, String>> _allTreatments = [
+    {
+      'treatmentName': 'Laser Hair Removal',
+      'date': 'April 20, 2025',
+      'status': 'Completed',
+      'type': 'Laser',
+      'aesthetician': 'John Carlo Vidal'
+    },
+    {
+      'treatmentName': 'Chemical Peel',
+      'date': 'May 15, 2025',
+      'status': 'Completed',
+      'type': 'Peel',
+      'aesthetician': 'Veoronica Bancoro'
+    },
+    {
+      'treatmentName': 'Facial Treatment',
+      'date': 'June 27, 2025',
+      'status': 'Completed',
+      'type': 'Facial',
+      'aesthetician': 'Daniel De Asis'
+    },
+    {
+      'treatmentName': 'Acne Therapy',
+      'date': 'July 5, 2025',
+      'status': 'Completed',
+      'type': 'Acne',
+      'aesthetician': 'Daniel De Asis'
+    },
+    {
+      'treatmentName': 'Microdermabrasion',
+      'date': 'August 10, 2025',
+      'status': 'Completed',
+      'type': 'Exfoliation',
+      'aesthetician': 'Ace Nathaniel Sinag'
+    },
+  ];
+
+  List<Map<String, String>> _filteredTreatments = [];
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Sort by date ascending
+    _allTreatments.sort((a, b) {
+      final dateA = DateTime.parse(_convertToIso(a['date']!));
+      final dateB = DateTime.parse(_convertToIso(b['date']!));
+      return dateA.compareTo(dateB);
+    });
+    _filteredTreatments = List.from(_allTreatments);
+    _searchController.addListener(_filterTreatments);
+  }
+
+  String _convertToIso(String date) {
+    final months = {
+      'January': '01',
+      'February': '02',
+      'March': '03',
+      'April': '04',
+      'May': '05',
+      'June': '06',
+      'July': '07',
+      'August': '08',
+      'September': '09',
+      'October': '10',
+      'November': '11',
+      'December': '12',
+    };
+    final parts = date.split(' ');
+    final month = months[parts[0]]!;
+    final day = parts[1].replaceAll(',', '').padLeft(2, '0');
+    final year = parts[2];
+    return '$year-$month-$day';
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterTreatments() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredTreatments = _allTreatments.where((treatment) {
+        final treatmentName = treatment['treatmentName']!.toLowerCase();
+        final treatmentType = treatment['type']!.toLowerCase();
+        final aesthetician = treatment['aesthetician']!.toLowerCase();
+        return treatmentName.contains(query) ||
+            treatmentType.contains(query) ||
+            aesthetician.contains(query);
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -62,11 +122,36 @@ class TreatmentTimelineSection extends StatelessWidget {
             style: TextStyle(fontSize: 16, color: Colors.pink),
           ),
           const SizedBox(height: 24),
-          ...treatments.map((t) => TreatmentTimelineItem(
-                treatmentName: t['treatmentName']!,
-                date: t['date']!,
-                status: t['status']!,
-              )),
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search treatments...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              filled: true,
+              fillColor: Colors.grey[200],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _filteredTreatments.isEmpty
+                ? const Center(child: Text('No treatments found'))
+                : ListView.builder(
+                    itemCount: _filteredTreatments.length,
+                    itemBuilder: (context, index) {
+                      final treatment = _filteredTreatments[index];
+                      return TreatmentTimelineItem(
+                        treatmentName: treatment['treatmentName']!,
+                        date: treatment['date']!,
+                        status: treatment['status']!,
+                        type: treatment['type']!,
+                        aesthetician: treatment['aesthetician']!,
+                      );
+                    },
+                  ),
+          ),
         ],
       ),
     );
@@ -77,12 +162,16 @@ class TreatmentTimelineItem extends StatelessWidget {
   final String treatmentName;
   final String date;
   final String status;
+  final String type;
+  final String aesthetician;
 
   const TreatmentTimelineItem({
     Key? key,
     required this.treatmentName,
     required this.date,
     required this.status,
+    required this.type,
+    required this.aesthetician,
   }) : super(key: key);
 
   @override
@@ -90,65 +179,32 @@ class TreatmentTimelineItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
+        isThreeLine: true, // <-- Add this line
         title: Text(treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(date),
-        trailing: Text(status, style: TextStyle(color: status == 'Completed' ? Colors.green : Colors.orange)),
-      ),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  final List<NavItem> _navItems = [
-    NavItem(icon: Icons.dashboard, label: 'Dashboard'),
-    NavItem(icon: Icons.person, label: 'Profile'),
-    NavItem(icon: Icons.medical_services, label: 'Services'),
-    NavItem(icon: Icons.calendar_today, label: 'My Appointments'),
-    NavItem(icon: Icons.history, label: 'Treatment History'),
-  ];
-
-  final List<Widget> _pages = [
-    HomeContent(), // Dashboard
-    ProfilePage(), // Profile
-    SkincareServicesSection(), // Services
-    Center(child: Text('My Appointments')), // My Appointments
-    TreatmentTimelineSection(), // Treatment History
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('K DERMA')),
-      drawer: Drawer(
-        child: ListView(
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DrawerHeader(child: Text('Menu')),
-            ..._navItems.asMap().entries.map((entry) {
-              int idx = entry.key;
-              NavItem item = entry.value;
-              return ListTile(
-                leading: Icon(item.icon),
-                title: Text(item.label),
-                selected: idx == _selectedIndex,
-                onTap: () {
-                  setState(() {
-                    _selectedIndex = idx;
-                  });
-                  Navigator.pop(context);
-                },
-              );
-            }),
+            Text(date),
+            Text('Type: $type', style: TextStyle(color: Colors.grey[600])),
+            Text('Aesthetician: $aesthetician', style: TextStyle(color: Colors.blueGrey[700])),
           ],
         ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.green[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            status,
+            style: TextStyle(
+              color: Colors.green[800],
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       ),
-      body: _pages[_selectedIndex],
     );
   }
 }
+// ...existing code...
