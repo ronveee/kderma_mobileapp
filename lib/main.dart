@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kderma_mobileapp/dashboard.dart';
 import 'package:kderma_mobileapp/treatment.dart';
 import 'package:kderma_mobileapp/services.dart' as services;
 
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
+        '/dashboard': (context) => DashboardPage(),
         '/services': (context) => services.SkincareServicesSection(),
         '/treatment': (context) => TreatmentTimelineSection(),
       },
@@ -50,9 +52,11 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     HomeContent(), // Dashboard
     ProfilePage(), // Profile
+    DashboardPage(),
     services.SkincareServicesSection(), // Services
     Center(child: Text('My Appointments')), // My Appointments
-    TreatmentTimelineSection(), // Treatment History
+    TreatmentTimelineSection(),
+    DashboardPage(),// Treatment History
   ];
 
   void _logout(BuildContext context) async {

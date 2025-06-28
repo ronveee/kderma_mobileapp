@@ -1,20 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: DashboardPage(),
-    );
-  }
-}
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -40,11 +25,29 @@ class DashboardPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              dashboardCard(
-                "Total Appointments",
-                "128",
-                "+14% from last month",
-                Icons.calendar_today,
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  dashboardCard(
+                    "Total Appointments",
+                    "128",
+                    "+14% from last month",
+                    Icons.calendar_today,
+                  ),
+                  dashboardCard(
+                    "Total Service Avail",
+                    "18",
+                    "+3 new this month",
+                    Icons.assignment_turned_in,
+                  ),
+                  dashboardCard(
+                    "Upcoming Schedule",
+                    "7",
+                    "+2 for this week",
+                    Icons.schedule,
+                  ),
+                ],
               ),
             ],
           ),
