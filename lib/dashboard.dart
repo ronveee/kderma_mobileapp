@@ -47,6 +47,12 @@ class DashboardPage extends StatelessWidget {
                     "+2 for this week",
                     Icons.schedule,
                   ),
+                  dashboardCard(
+                    "Total Discount Points",
+                    "600",
+                    "+8% from last month",
+                    Icons.attach_money,
+                  ),
                 ],
               ),
             ],
