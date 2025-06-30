@@ -42,7 +42,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Image.asset(
-                'assets/logo.png', // Ensure this file exists and is listed in pubspec.yaml
+                'assets/wawa.jpg', // Ensure this file exists and is listed in pubspec.yaml
                 height: 60,
               ),
               const SizedBox(height: 8),
