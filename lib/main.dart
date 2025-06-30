@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kderma_mobileapp/dashboard.dart';
 import 'package:kderma_mobileapp/treatment.dart';
 import 'package:kderma_mobileapp/services.dart' as services;
-
+import 'package:kderma_mobileapp/Login.dart';
 void main() {
   runApp(MyApp());
 }
@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(),
         '/dashboard': (context) => Dashboard(),
         '/services': (context) => services.SkincareServicesSection(),
-        '/treatment': (context) =>TreatmentTimelineSection(),
       },
     );
   }
