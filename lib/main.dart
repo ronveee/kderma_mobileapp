@@ -18,10 +18,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/dashboard': (context) => DashboardPage(),
+        '/dashboard': (context) => Dashboard(),
         '/services': (context) => services.SkincareServicesSection(),
-        '/treatment': (context) => TreatmentTimelineSection(),
-        '/Login': (context) => Login()
       },
     );
   }
@@ -51,13 +49,11 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<Widget> _pages = [
-    HomeContent(), // Dashboard
+    Dashboard(), // Dashboard
     ProfilePage(), // Profile
-    DashboardPage(),
     services.SkincareServicesSection(), // Services
     Center(child: Text('My Appointments')), // My Appointments
-    TreatmentTimelineSection(),
-    DashboardPage(),// Treatment History
+    TreatmentTimelineSection(),// Treatment History
   ];
 
   void _logout(BuildContext context) async {
