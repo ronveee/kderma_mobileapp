@@ -158,7 +158,7 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
   }
 }
 
-class TreatmentTimelineItem extends StatelessWidget {
+class TreatmentTimelineItem extends StatefulWidget {
   final String treatmentName;
   final String date;
   final String status;
@@ -175,33 +175,62 @@ class TreatmentTimelineItem extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _TreatmentTimelineItemState createState() => _TreatmentTimelineItemState();
+}
+
+class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
+  final List<String> _actions = [
+    'View Details',
+    'Book Again',
+    'Give Feedback',
+  ];
+
+  void _onActionSelected(String action) {
+    // Add your action logic here
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Selected: $action for ${widget.treatmentName}')),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        isThreeLine: true, // <-- Add this line
-        title: Text(treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
+        isThreeLine: true,
+        title: Text(widget.treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(date),
-            Text('Type: $type', style: TextStyle(color: Colors.grey[600])),
-            Text('Aesthetician: $aesthetician', style: TextStyle(color: Colors.blueGrey[700])),
+            Text(widget.date),
+            Text('Type: ${widget.type}', style: TextStyle(color: Colors.grey[600])),
+            Text('Aesthetician: ${widget.aesthetician}', style: TextStyle(color: Colors.blueGrey[700])),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.green[100],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                widget.status,
+                style: TextStyle(
+                  color: Colors.green[800],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.green[100],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            status,
-            style: TextStyle(
-              color: Colors.green[800],
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        trailing: PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: _onActionSelected,
+          itemBuilder: (context) => _actions
+              .map((action) => PopupMenuItem<String>(
+                    value: action,
+                    child: Text(action),
+                  ))
+              .toList(),
         ),
       ),
     );

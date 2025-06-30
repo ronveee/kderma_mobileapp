@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+class Dashboard extends StatelessWidget {
+  const Dashboard({super.key});
 
   final Color lightPink = const Color(0xFFFFF5F7);
 
