@@ -179,59 +179,91 @@ class TreatmentTimelineItem extends StatefulWidget {
 }
 
 class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
-  final List<String> _actions = [
-    'View Details',
-    'Book Again',
-    'Give Feedback',
-  ];
-
-  void _onActionSelected(String action) {
-    // Add your action logic here
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Selected: $action for ${widget.treatmentName}')),
-    );
-  }
+  bool _showDetails = false;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        isThreeLine: true,
-        title: Text(widget.treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.date),
-            Text('Type: ${widget.type}', style: TextStyle(color: Colors.grey[600])),
-            Text('Aesthetician: ${widget.aesthetician}', style: TextStyle(color: Colors.blueGrey[700])),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                widget.status,
-                style: TextStyle(
-                  color: Colors.green[800],
-                  fontWeight: FontWeight.bold,
+      child: Column(
+        children: [
+          ListTile(
+            isThreeLine: true,
+            title: Text(widget.treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.date),
+                Text('Type: ${widget.type}', style: TextStyle(color: Colors.grey[600])),
+                Text('Aesthetician: ${widget.aesthetician}', style: TextStyle(color: Colors.blueGrey[700])),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    widget.status,
+                    style: TextStyle(
+                      color: Colors.green[800],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
+              ],
+            ),
+            trailing: TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.pink,
+              ),
+              onPressed: () {
+                setState(() {
+                  _showDetails = !_showDetails;
+                });
+              },
+              icon: Icon(_showDetails ? Icons.arrow_drop_up : Icons.arrow_drop_down),
+              label: const Text('Details'),
+            ),
+          ),
+          if (_showDetails)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage: AssetImage('assets/images/treatment.png'),
+                    backgroundColor: Colors.grey[200],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    widget.treatmentName,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Date: ${widget.date}'),
+                  Text('Type: ${widget.type}'),
+                  Text('Aesthetician: ${widget.aesthetician}'),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      widget.status,
+                      style: TextStyle(
+                        color: Colors.green[800],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-        trailing: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert),
-          onSelected: _onActionSelected,
-          itemBuilder: (context) => _actions
-              .map((action) => PopupMenuItem<String>(
-                    value: action,
-                    child: Text(action),
-                  ))
-              .toList(),
-        ),
+        ],
       ),
     );
   }
