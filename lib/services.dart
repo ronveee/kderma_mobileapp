@@ -43,6 +43,11 @@ class SkincareServicesSection extends StatelessWidget {
                   description:
                       'Early morning and evening appointments available',
                 ),
+                _ServiceCard(
+                  icon: Icons.credit_card,
+                  title: 'Insurance Accepted',
+                  description: 'We work with most major insurance providers',
+                ),
               ],
             ),
           ],
