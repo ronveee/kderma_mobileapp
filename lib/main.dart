@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kderma_mobileapp/dashboard.dart';
+import 'package:kderma_mobileapp/profile.dart';
 import 'package:kderma_mobileapp/treatment.dart';
 import 'package:kderma_mobileapp/services.dart' as services;
 import 'package:kderma_mobileapp/Login.dart';
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'K DERMA',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -23,11 +25,13 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/dashboard': (context) => DashboardPage(),
+        '/dashboard': (context) => Dashboard(),
+        '/profile': (context) => ProfilePage(),
         '/services': (context) => services.SkincareServicesSection(),
         '/treatment': (context) => TreatmentTimelineSection(),
         '/login': (context) => Login(),
         '/register': (context) => ClientRegistrationForm(),
+
 
       },
     );

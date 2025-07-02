@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+class Dashboard extends StatelessWidget {
+  const Dashboard({super.key});
 
   final Color lightPink = const Color(0xFFFFF5F7);
 
@@ -46,6 +46,12 @@ class DashboardPage extends StatelessWidget {
                     "7",
                     "+2 for this week",
                     Icons.schedule,
+                  ),
+                  dashboardCard(
+                    "Total Discount Points",
+                    "600",
+                    "+8% from last month",
+                    Icons.attach_money,
                   ),
                 ],
               ),
