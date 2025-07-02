@@ -181,15 +181,71 @@ class TreatmentTimelineItem extends StatefulWidget {
 class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
   bool _showDetails = false;
 
+  // Treatment images by type/name
+  final Map<String, String> _treatmentImages = {
+    'Laser Hair Removal': 'assets/laserhairremoval.jpg',
+    'Chemical Peel': 'assets/chemicalpeel.jpg',
+    'Facial Treatment': 'assets/facialtreatment.jpg',
+    'Acne Therapy': 'assets/acnetherapy.jpg',
+    'Microdermabrasion': 'assets/microdermabrasion.jpg',
+  };
+
+  // Product recommendations with image path and name
+  Map<String, Map<String, String>> _productRecommendations = {
+    'laser': {
+      'name': 'Soothing Aloe Gel',
+      'image': 'assets/aloegel.jpg',
+    },
+    'peel': {
+      'name': 'Hydrating Serum',
+      'image': 'assets/hydratingserum.jpg',
+    },
+    'facial': {
+      'name': 'Gentle Cleanser',
+      'image': 'assets/gentlecleanser.jpg',
+    },
+    'acne': {
+      'name': 'Acne Spot Treatment',
+      'image': 'assets/acnespot.jpg',
+    },
+    'exfoliation': {
+      'name': 'Moisturizing Cream',
+      'image': 'assets/moisturizingcream.jpg',
+    },
+  };
+
+  Map<String, String> _getProductRecommendation(String type) {
+    return _productRecommendations[type.toLowerCase()] ?? _productRecommendations['default']!;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final recommendation = _getProductRecommendation(widget.type);
+    final treatmentImage = _treatmentImages[widget.treatmentName] ?? 'assets/images/acnetherapy.jpg';
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         children: [
           ListTile(
             isThreeLine: true,
-            title: Text(widget.treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Treatment image above the treatment name
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: CircleAvatar(
+                      radius: 32,
+                      backgroundImage: AssetImage(treatmentImage),
+                      backgroundColor: Colors.grey[200],
+                    ),
+                  ),
+                ),
+                Text(widget.treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -231,12 +287,13 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/images/treatment.png'),
-                    backgroundColor: Colors.grey[200],
-                  ),
-                  const SizedBox(height: 12),
+                  // You can keep or remove this image below, since it's now above the name in the ListTile
+                  // CircleAvatar(
+                  //   radius: 40,
+                  //   backgroundImage: AssetImage(treatmentImage),
+                  //   backgroundColor: Colors.grey[200],
+                  // ),
+                  // const SizedBox(height: 12),
                   Text(
                     widget.treatmentName,
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -260,6 +317,44 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  // Product Recommendation with image section
+                  if (widget.status.toLowerCase() == 'completed')
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.pink[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.pink.shade100),
+                      ),
+                      child: Row(
+                        children: [
+                          // Product image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              recommendation['image']!,
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          const Icon(Icons.recommend, color: Colors.pink),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Recommended: ${recommendation['name']}',
+                              style: const TextStyle(
+                                color: Colors.pink,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -268,4 +363,3 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
     );
   }
 }
-// ...existing code...
