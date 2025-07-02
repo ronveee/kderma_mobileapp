@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 
-
 class Login extends StatelessWidget {
   const Login({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'K Derma Login',
-      debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
-    );
+    return const LoginPage(); 
   }
 }
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Center(
         child: Container(
@@ -42,7 +45,7 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Image.asset(
-                'assets/logo.png', // Ensure this file exists and is listed in pubspec.yaml
+                'assets/wawa.jpg',
                 height: 60,
               ),
               const SizedBox(height: 8),
@@ -96,8 +99,12 @@ class LoginPage extends StatelessWidget {
               Row(
                 children: [
                   Checkbox(
-                    value: true,
-                    onChanged: (val) {},
+                    value: _rememberMe,
+                    onChanged: (val) {
+                      setState(() {
+                        _rememberMe = val ?? false;
+                      });
+                    },
                     activeColor: Colors.pink,
                   ),
                   const Text("Remember me")
@@ -114,7 +121,9 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/');
+                  },
                   child: const Text(
                     "Sign In",
                     style: TextStyle(color: Colors.white),
@@ -125,7 +134,9 @@ class LoginPage extends StatelessWidget {
               const Text("Don't have an account? ",
                   style: TextStyle(color: Colors.black54)),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
                 child: const Text("Sign up", style: TextStyle(color: Colors.pinkAccent)),
               ),
             ],

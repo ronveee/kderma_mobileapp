@@ -4,6 +4,10 @@ import 'package:kderma_mobileapp/profile.dart';
 import 'package:kderma_mobileapp/treatment.dart';
 import 'package:kderma_mobileapp/services.dart' as services;
 import 'package:kderma_mobileapp/Login.dart';
+
+import 'ClientRegistrationForm.dart';
+
+
 void main() {
   runApp(MyApp());
 }
@@ -17,12 +21,18 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
         '/dashboard': (context) => Dashboard(),
         '/profile': (context) => ProfilePage(),
         '/services': (context) => services.SkincareServicesSection(),
+        '/treatment': (context) => TreatmentTimelineSection(),
+        '/login': (context) => Login(),
+        '/register': (context) => ClientRegistrationForm(),
+
+
       },
     );
   }
@@ -48,15 +58,16 @@ class _HomePageState extends State<HomePage> {
     NavItem(icon: Icons.person, label: 'Profile'),
     NavItem(icon: Icons.medical_services, label: 'Services'),
     NavItem(icon: Icons.calendar_today, label: 'My Appointments'),
-    NavItem(icon: Icons.medical_services, label: 'Treatment History'),
+    NavItem(icon: Icons.history, label: 'Treatment History'),
   ];
 
   final List<Widget> _pages = [
-    Dashboard(), // Dashboard
-    ProfileScreen(), // Profile
+    HomeContent(), // Dashboard
+    ProfilePage(), // Profile
     services.SkincareServicesSection(), // Services
     Center(child: Text('My Appointments')), // My Appointments
-    TreatmentTimelineSection(),// Treatment History
+    TreatmentTimelineSection(),
+    Login()
   ];
 
   void _logout(BuildContext context) async {
@@ -77,8 +88,9 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+
     if (shouldLogout == true) {
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.pushReplacementNamed(context, '/login'); // Go to login page
     }
   }
 
@@ -121,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         _selectedIndex = index;
                       });
-                      Navigator.pop(context);
+                      Navigator.pop(context); // close the drawer
                     },
                   );
                 },
@@ -141,6 +153,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// Dummy Profile Page
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -148,6 +161,7 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+// Dummy Home Page
 class HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
