@@ -4,6 +4,9 @@ import 'package:kderma_mobileapp/treatment.dart';
 import 'package:kderma_mobileapp/services.dart' as services;
 import 'package:kderma_mobileapp/Login.dart';
 
+import 'ClientRegistrationForm.dart';
+
+
 void main() {
   runApp(MyApp());
 }
@@ -23,7 +26,9 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => DashboardPage(),
         '/services': (context) => services.SkincareServicesSection(),
         '/treatment': (context) => TreatmentTimelineSection(),
-        '/login': (context) => Login(), // route name should be lowercase for consistency
+        '/login': (context) => Login(),
+        '/register': (context) => ClientRegistrationForm(),
+
       },
     );
   }
@@ -57,7 +62,8 @@ class _HomePageState extends State<HomePage> {
     ProfilePage(), // Profile
     services.SkincareServicesSection(), // Services
     Center(child: Text('My Appointments')), // My Appointments
-    TreatmentTimelineSection(), // Treatment History
+    TreatmentTimelineSection(),
+    Login()
   ];
 
   void _logout(BuildContext context) async {
