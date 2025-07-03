@@ -55,6 +55,8 @@ class DashboardPage extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 30),
+              appointmentsCard(),
             ],
           ),
         ),
@@ -100,4 +102,36 @@ class DashboardPage extends StatelessWidget {
       ),
     );
   }
+  static Widget appointmentsCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Upcoming Appointments',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+        ],
+      ),
+    );
+
+  }
 }
+
