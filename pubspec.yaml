@@ -72,6 +72,18 @@ flutter:
     - assets/hydratingserum.jpg
     - assets/moisturizingcream.jpg
     - assets/acnespot.jpg
+
+    - assets/bf/acne therapy1.jpg
+    - assets/bf/acne therapy2.jpg
+    - assets/bf/chemical peel1.jpg
+    - assets/bf/chemical peel2.jpg
+    - assets/bf/dermabrasion.jpg
+    - assets/bf/dermabrasion2.jpg
+    - assets/bf/facial treatment1.jpg
+    - assets/bf/facial treatment2.jpg
+    - assets/bf/laser hair removal1.jpg
+    - assets/bf/laser hair removal2.jpg
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

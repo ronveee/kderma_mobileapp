@@ -148,6 +148,8 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
                         status: treatment['status']!,
                         type: treatment['type']!,
                         aesthetician: treatment['aesthetician']!,
+                        beforeImage: _getBeforeImage(treatment['treatmentName']!),
+                        afterImage: _getAfterImage(treatment['treatmentName']!),
                       );
                     },
                   ),
@@ -155,6 +157,41 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
         ],
       ),
     );
+  }
+
+  // Helper methods to provide before/after images by treatment name
+  String? _getBeforeImage(String treatmentName) {
+    switch (treatmentName) {
+      case 'Laser Hair Removal':
+        return 'assets/bf/laser hair removal1.jpg';
+      case 'Chemical Peel':
+        return 'assets/bf/chemical peel1.jpg';
+      case 'Facial Treatment':
+        return 'assets/bf/facial treatment1.jpg';
+      case 'Acne Therapy':
+        return 'assets/bf/acne therapy1.jpg';
+      case 'Microdermabrasion':
+        return 'assets/bf/dermabrasion.jpg';
+      default:
+        return null;
+    }
+  }
+
+  String? _getAfterImage(String treatmentName) {
+    switch (treatmentName) {
+      case 'Laser Hair Removal':
+        return 'assets/bf/laser hair removal2.jpg';
+      case 'Chemical Peel':
+        return 'assets/bf/chemical peel2.jpg';
+      case 'Facial Treatment':
+        return 'assets/bf/facial treatment2.jpg';
+      case 'Acne Therapy':
+        return 'assets/bf/acne therapy2.jpg';
+      case 'Microdermabrasion':
+        return 'assets/bf/dermabrasion2.jpg';
+      default:
+        return null;
+    }
   }
 }
 
@@ -164,6 +201,8 @@ class TreatmentTimelineItem extends StatefulWidget {
   final String status;
   final String type;
   final String aesthetician;
+  final String? beforeImage;
+  final String? afterImage;
 
   const TreatmentTimelineItem({
     Key? key,
@@ -172,6 +211,8 @@ class TreatmentTimelineItem extends StatefulWidget {
     required this.status,
     required this.type,
     required this.aesthetician,
+    this.beforeImage,
+    this.afterImage,
   }) : super(key: key);
 
   @override
@@ -180,8 +221,8 @@ class TreatmentTimelineItem extends StatefulWidget {
 
 class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
   bool _showDetails = false;
+  bool _showBeforeAfter = false;
 
-  // Treatment images by type/name
   final Map<String, String> _treatmentImages = {
     'Laser Hair Removal': 'assets/laserhairremoval.jpg',
     'Chemical Peel': 'assets/chemicalpeel.jpg',
@@ -190,8 +231,7 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
     'Microdermabrasion': 'assets/microdermabrasion.jpg',
   };
 
-  // Product recommendations with image path and name
-  Map<String, Map<String, String>> _productRecommendations = {
+  final Map<String, Map<String, String>> _productRecommendations = {
     'laser': {
       'name': 'Soothing Aloe Gel',
       'image': 'assets/aloegel.jpg',
@@ -211,6 +251,10 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
     'exfoliation': {
       'name': 'Moisturizing Cream',
       'image': 'assets/moisturizingcream.jpg',
+    },
+    'default': {
+      'name': 'General Skincare Product',
+      'image': 'assets/default_product.jpg',
     },
   };
 
@@ -232,7 +276,6 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Treatment image above the treatment name
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
@@ -287,13 +330,6 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
               child: Column(
                 children: [
-                  // You can keep or remove this image below, since it's now above the name in the ListTile
-                  // CircleAvatar(
-                  //   radius: 40,
-                  //   backgroundImage: AssetImage(treatmentImage),
-                  //   backgroundColor: Colors.grey[200],
-                  // ),
-                  // const SizedBox(height: 12),
                   Text(
                     widget.treatmentName,
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -318,7 +354,86 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // Product Recommendation with image section
+                  // --- Before & After Dropdown Section ---
+                  if (widget.status.toLowerCase() == 'completed')
+                    Column(
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text(
+                            'Before & After',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(
+                              _showBeforeAfter ? Icons.expand_less : Icons.expand_more,
+                              color: Colors.pink,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _showBeforeAfter = !_showBeforeAfter;
+                              });
+                            },
+                          ),
+                        ),
+                        if (_showBeforeAfter)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    const Text('Before', style: TextStyle(fontSize: 12)),
+                                    const SizedBox(height: 4),
+                                    widget.beforeImage != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Image.asset(
+                                              widget.beforeImage!,
+                                              height: 80,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) =>
+                                                  const Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+                                            ),
+                                          )
+                                        : Container(
+                                            height: 80,
+                                            color: Colors.grey[200],
+                                            child: const Center(child: Text('No Image')),
+                                          ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    const Text('After', style: TextStyle(fontSize: 12)),
+                                    const SizedBox(height: 4),
+                                    widget.afterImage != null
+                                        ? ClipRRect(
+                                            borderRadius: BorderRadius.circular(8),
+                                            child: Image.asset(
+                                              widget.afterImage!,
+                                              height: 80,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) =>
+                                                  const Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+                                            ),
+                                          )
+                                        : Container(
+                                            height: 80,
+                                            color: Colors.grey[200],
+                                            child: const Center(child: Text('No Image')),
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 12),
+                      ],
+                    ),
+                  // --- End Before & After Dropdown Section ---
                   if (widget.status.toLowerCase() == 'completed')
                     Container(
                       padding: const EdgeInsets.all(10),
@@ -329,7 +444,6 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                       ),
                       child: Row(
                         children: [
-                          // Product image
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.asset(
@@ -337,7 +451,8 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                               width: 48,
                               height: 48,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -363,3 +478,4 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
     );
   }
 }
+// ...existing code...
