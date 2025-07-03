@@ -15,14 +15,14 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
       'date': 'April 20, 2025',
       'status': 'Completed',
       'type': 'Laser',
-      'aesthetician': 'John Carlo Vidal'
+      'aesthetician': 'Daniel De Asis'
     },
     {
       'treatmentName': 'Chemical Peel',
       'date': 'May 15, 2025',
       'status': 'Completed',
       'type': 'Peel',
-      'aesthetician': 'Veoronica Bancoro'
+      'aesthetician': 'Daniel De Asis'
     },
     {
       'treatmentName': 'Facial Treatment',
@@ -43,7 +43,7 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
       'date': 'August 10, 2025',
       'status': 'Completed',
       'type': 'Exfoliation',
-      'aesthetician': 'Ace Nathaniel Sinag'
+      'aesthetician': 'Daniel De Asis'
     },
   ];
 

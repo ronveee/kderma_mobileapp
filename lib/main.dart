@@ -21,23 +21,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
         '/dashboard': (context) => Dashboard(),
-        '/profile': (context) => ProfilePage(),
+        '/profile': (context) => ProfileScreen(),
         '/services': (context) => services.SkincareServicesSection(),
         '/treatment': (context) => TreatmentTimelineSection(),
         '/login': (context) => Login(),
         '/register': (context) => ClientRegistrationForm(),
-
-
       },
     );
   }
 }
-
 class NavItem {
   final IconData icon;
   final String label;
@@ -62,8 +58,8 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<Widget> _pages = [
-    HomeContent(), // Dashboard
-    ProfilePage(), // Profile
+    Dashboard(), // Dashboard
+    ProfileScreen(), // Profile
     services.SkincareServicesSection(), // Services
     Center(child: Text('My Appointments')), // My Appointments
     TreatmentTimelineSection(),
