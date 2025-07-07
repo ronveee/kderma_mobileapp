@@ -11,24 +11,21 @@ class FeaturedServicesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardData = [
       {
-        'image':
-            'https://www.mylrh.org/wp-content/uploads/2021/10/cosmetic-laser-surgical-skin-treatment-1-scaled.jpg',
+        'image': 'assets/hydratingserum.jpg',
         'title': 'Hydrating Skin Therapy',
         'subtitle': 'Restore moisture balance to your skin',
         'description':
             'Our advanced hydrating therapy uses hyaluronic acid and marine extracts to deeply moisturize and rejuvenate dehydrated skin.',
       },
       {
-        'image':
-            'https://www.mylrh.org/wp-content/uploads/2021/10/cosmetic-laser-surgical-skin-treatment-1-scaled.jpg',
+        'image': 'assets/facialtreatment.jpg',
         'title': 'Skin Analysis & Consultation',
         'subtitle': 'Personalized skin assessment',
         'description':
             'Get a comprehensive skin analysis using advanced diagnostic tools to identify your unique skin concerns and receive a personalized treatment plan.',
       },
       {
-        'image':
-            'https://www.mylrh.org/wp-content/uploads/2021/10/cosmetic-laser-surgical-skin-treatment-1-scaled.jpg',
+        'image': 'assets/laserhairremoval.jpg',
         'title': 'Laser Skin Rejuvenation',
         'subtitle': 'Advanced laser treatment',
         'description':
@@ -98,7 +95,7 @@ class FeaturedServicesSection extends StatelessWidget {
                         ),
                         child: Stack(
                           children: [
-                            Image.network(
+                            Image.asset(
                               data['image']!,
                               height: 140,
                               width: double.infinity,
@@ -184,7 +181,15 @@ class FeaturedServicesSection extends StatelessWidget {
                                         fontSize: 16),
                                     elevation: 0,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookAppointmentPage(
+                                                serviceData: data),
+                                      ),
+                                    );
+                                  },
                                   child: const Text('Book Appointment'),
                                 ),
                               ),
@@ -243,7 +248,7 @@ class AllFeaturedServicesPage extends StatelessWidget {
                   ),
                   child: Stack(
                     children: [
-                      Image.network(
+                      Image.asset(
                         data['image']!,
                         height: 170,
                         width: double.infinity,
@@ -319,7 +324,14 @@ class AllFeaturedServicesPage extends StatelessWidget {
                                 fontWeight: FontWeight.bold, fontSize: 16),
                             elevation: 0,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    BookAppointmentPage(serviceData: data),
+                              ),
+                            );
+                          },
                           child: const Text('Book Appointment'),
                         ),
                       ),
@@ -451,6 +463,208 @@ class _ServiceCard extends StatelessWidget {
             textAlign: isMobile ? TextAlign.center : TextAlign.start,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class BookAppointmentPage extends StatefulWidget {
+  final Map<String, String> serviceData;
+  const BookAppointmentPage({super.key, required this.serviceData});
+
+  @override
+  State<BookAppointmentPage> createState() => _BookAppointmentPageState();
+}
+
+class _BookAppointmentPageState extends State<BookAppointmentPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+
+  Future<void> pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 365)),
+    );
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        selectedTime = picked;
+      });
+    }
+  }
+
+  void submitForm() {
+    if (_formKey.currentState!.validate() &&
+        selectedDate != null &&
+        selectedTime != null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Appointment Booked'),
+          content: const Text('Your appointment has been booked successfully!'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Book Appointment'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (widget.serviceData['image'] != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    widget.serviceData['image']!,
+                    height: 180,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              const SizedBox(height: 24),
+              Text(
+                widget.serviceData['title'] ?? '',
+                style:
+                    const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 28),
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.pink.withOpacity(0.07),
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Please enter your name'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: emailController,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Please enter your email'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: phoneController,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.phone,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'Please enter your phone number'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: pickDate,
+                                child: Text(selectedDate == null
+                                    ? 'Select Date'
+                                    : '${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}'),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: pickTime,
+                                child: Text(selectedTime == null
+                                    ? 'Select Time'
+                                    : selectedTime!.format(context)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (selectedDate == null || selectedTime == null)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 8.0),
+                            child: Text('Please select date and time',
+                                style: TextStyle(color: Colors.red)),
+                          ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.pink,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              textStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            onPressed: submitForm,
+                            child: const Text('Submit'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
