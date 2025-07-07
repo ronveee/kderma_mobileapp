@@ -45,6 +45,20 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
       'type': 'Exfoliation',
       'aesthetician': 'Daniel De Asis'
     },
+    {
+      'treatmentName': 'Microdermabrasion',
+      'date': 'August 10, 2025',
+      'status': 'Completed',
+      'type': 'Exfoliation',
+      'aesthetician': 'Ace Sinag'
+    },
+    {
+      'treatmentName': 'Microdermabrasion',
+      'date': 'August 10, 2025',
+      'status': 'Completed',
+      'type': 'Exfoliation',
+      'aesthetician': 'Ace Sinag'
+    },
   ];
 
   List<Map<String, String>> _filteredTreatments = [];
