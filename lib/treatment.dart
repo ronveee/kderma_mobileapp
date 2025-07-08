@@ -139,8 +139,7 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
                   style: TextStyle(fontSize: 16, color: Colors.pink),
                 ),
                 const SizedBox(height: 24),
-                _buildAnalysisCard(),
-                const SizedBox(height: 16),
+                // Move the Search Bar above the Treatment Analysis card
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -154,8 +153,9 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Replace Expanded with this:
+                _buildAnalysisCard(),
+                const SizedBox(height: 16),
+                // Treatment Timeline List
                 _filteredTreatments.isEmpty
                     ? const Center(
                         child: Padding(
@@ -238,7 +238,7 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Treatment Analysis',
+              'Your Treatment Analysis',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
@@ -515,8 +515,7 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                                         : Container(
                                             height: 80,
                                             color: Colors.grey[200],
-                                            child: const Center(child: Text('No Image')),
-                                          ),
+                                            child: const Center(child: Text('No Image'))),
                                   ],
                                 ),
                               ),
