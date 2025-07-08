@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-// ...existing code...
 
 class TreatmentTimelineSection extends StatefulWidget {
   const TreatmentTimelineSection({super.key});
 
   @override
-  _TreatmentTimelineSectionState createState() => _TreatmentTimelineSectionState();
+  _TreatmentTimelineSectionState createState() =>
+      _TreatmentTimelineSectionState();
 }
 
 class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
@@ -121,52 +121,148 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Treatment Timeline',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Track your skincare treatments and progress',
-            style: TextStyle(fontSize: 16, color: Colors.pink),
-          ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search treatments...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              filled: true,
-              fillColor: Colors.grey[200],
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Treatment Timeline',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Track your skincare treatments and progress',
+                  style: TextStyle(fontSize: 16, color: Colors.pink),
+                ),
+                const SizedBox(height: 24),
+                _buildAnalysisCard(),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search treatments...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Replace Expanded with this:
+                _filteredTreatments.isEmpty
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          child: Text('No treatments found'),
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _filteredTreatments.length,
+                        itemBuilder: (context, index) {
+                          final treatment = _filteredTreatments[index];
+                          return TreatmentTimelineItem(
+                            treatmentName: treatment['treatmentName']!,
+                            date: treatment['date']!,
+                            status: treatment['status']!,
+                            type: treatment['type']!,
+                            aesthetician: treatment['aesthetician']!,
+                            beforeImage:
+                                _getBeforeImage(treatment['treatmentName']!),
+                            afterImage:
+                                _getAfterImage(treatment['treatmentName']!),
+                          );
+                        },
+                      ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: _filteredTreatments.isEmpty
-                ? const Center(child: Text('No treatments found'))
-                : ListView.builder(
-                    itemCount: _filteredTreatments.length,
-                    itemBuilder: (context, index) {
-                      final treatment = _filteredTreatments[index];
-                      return TreatmentTimelineItem(
-                        treatmentName: treatment['treatmentName']!,
-                        date: treatment['date']!,
-                        status: treatment['status']!,
-                        type: treatment['type']!,
-                        aesthetician: treatment['aesthetician']!,
-                        beforeImage: _getBeforeImage(treatment['treatmentName']!),
-                        afterImage: _getAfterImage(treatment['treatmentName']!),
-                      );
-                    },
-                  ),
+        ),
+      ),
+    );
+  }
+
+  // Treatment Analysis Card
+  Widget _buildAnalysisCard() {
+    final total = _allTreatments.length;
+
+    final Map<String, int> treatmentCounts = {};
+    final Map<String, int> aestheticianCounts = {};
+    final List<DateTime> dates = [];
+
+    for (var treatment in _allTreatments) {
+      final name = treatment['treatmentName']!;
+      final aesthetician = treatment['aesthetician']!;
+      final date = DateTime.parse(_convertToIso(treatment['date']!));
+
+      treatmentCounts[name] = (treatmentCounts[name] ?? 0) + 1;
+      aestheticianCounts[aesthetician] = (aestheticianCounts[aesthetician] ?? 0) + 1;
+      dates.add(date);
+    }
+
+    final mostFrequent = treatmentCounts.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
+    final topAesthetician = aestheticianCounts.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
+
+    double avgGap = 0;
+    if (dates.length > 1) {
+      dates.sort();
+      int totalGap = 0;
+      for (int i = 1; i < dates.length; i++) {
+        totalGap += dates[i].difference(dates[i - 1]).inDays;
+      }
+      avgGap = totalGap / (dates.length - 1);
+    }
+
+    final lastDate = _allTreatments.last['date'];
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Colors.pink[50],
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Treatment Analysis',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            _buildStatRow('Total Treatments', '$total'),
+            _buildStatRow('Most Frequent', mostFrequent),
+            _buildStatRow('Top Aesthetician', topAesthetician),
+            _buildStatRow('Avg. Interval', '${avgGap.toStringAsFixed(1)} days'),
+            _buildStatRow('Last Treatment', lastDate ?? 'N/A'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.pink),
           ),
         ],
       ),
@@ -273,13 +369,15 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
   };
 
   Map<String, String> _getProductRecommendation(String type) {
-    return _productRecommendations[type.toLowerCase()] ?? _productRecommendations['default']!;
+    return _productRecommendations[type.toLowerCase()] ??
+        _productRecommendations['default']!;
   }
 
   @override
   Widget build(BuildContext context) {
     final recommendation = _getProductRecommendation(widget.type);
-    final treatmentImage = _treatmentImages[widget.treatmentName] ?? 'assets/images/acnetherapy.jpg';
+    final treatmentImage = _treatmentImages[widget.treatmentName] ??
+        'assets/images/acnetherapy.jpg';
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -300,15 +398,18 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                     ),
                   ),
                 ),
-                Text(widget.treatmentName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(widget.treatmentName,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(widget.date),
-                Text('Type: ${widget.type}', style: TextStyle(color: Colors.grey[600])),
-                Text('Aesthetician: ${widget.aesthetician}', style: TextStyle(color: Colors.blueGrey[700])),
+                Text('Type: ${widget.type}',
+                    style: TextStyle(color: Colors.grey[600])),
+                Text('Aesthetician: ${widget.aesthetician}',
+                    style: TextStyle(color: Colors.blueGrey[700])),
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -335,7 +436,9 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                   _showDetails = !_showDetails;
                 });
               },
-              icon: Icon(_showDetails ? Icons.arrow_drop_up : Icons.arrow_drop_down),
+              icon: Icon(_showDetails
+                  ? Icons.arrow_drop_up
+                  : Icons.arrow_drop_down),
               label: const Text('Details'),
             ),
           ),
@@ -492,4 +595,3 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
     );
   }
 }
-// ...existing code...
