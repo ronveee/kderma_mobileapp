@@ -408,6 +408,7 @@ class SkincareServicesSection extends StatelessWidget {
           const SizedBox(height: 16),
           const FeaturedServicesSection(
               padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0)),
+          OurServicesSection(),
         ],
       ),
     );
@@ -665,6 +666,361 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ServiceDetailsPage extends StatelessWidget {
+  final Map<String, dynamic> serviceData;
+  const ServiceDetailsPage({super.key, required this.serviceData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(serviceData['title'] ?? 'Service Details'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (serviceData['image'] != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    serviceData['image'],
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    serviceData['title'] ?? '',
+                    style: const TextStyle(
+                        fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  if (serviceData['popular'] == true)
+                    Container(
+                      margin: const EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.pink,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'Popular',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                serviceData['category'] ?? '',
+                style: const TextStyle(fontSize: 18, color: Colors.pink),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                serviceData['description'] ?? '',
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.access_time, size: 20, color: Colors.pink),
+                  const SizedBox(width: 6),
+                  Text('${serviceData['duration']} min',
+                      style: const TextStyle(fontSize: 16)),
+                  const SizedBox(width: 18),
+                  Text('₱${serviceData['price'].toStringAsFixed(2)}',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pink,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => BookAppointmentPage(
+                            serviceData: Map<String, String>.from(serviceData)),
+                      ),
+                    );
+                  },
+                  child: const Text('Book Now'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OurServicesSection extends StatefulWidget {
+  const OurServicesSection({super.key});
+
+  @override
+  State<OurServicesSection> createState() => _OurServicesSectionState();
+}
+
+class _OurServicesSectionState extends State<OurServicesSection> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  final List<Map<String, dynamic>> _services = [
+    {
+      'image': 'assets/facialtreatment.jpg',
+      'title': 'Deep Cleansing Facial',
+      'category': 'Facials',
+      'description':
+          'A thorough cleansing treatment that removes impurities, unclogs pores and refreshes your skin. Includes steam,...',
+      'duration': 60,
+      'price': 85.00,
+      'popular': true,
+    },
+    {
+      'image': 'assets/acnetherapy.jpg',
+      'title': 'Anti-Aging Consultation',
+      'category': 'Consultation',
+      'description':
+          'Personalized anti-aging consultation with our dermatologist to create a tailored skincare regimen for your unique needs.',
+      'duration': 45,
+      'price': 120.00,
+      'popular': false,
+    },
+    {
+      'image': 'assets/acnespot.jpg',
+      'title': 'Acne Treatment',
+      'category': 'Treatments',
+      'description':
+          'Specialized treatment for acne-prone skin, focusing on deep cleansing, inflammation reduction, and preventing future...',
+      'duration': 75,
+      'price': 95.00,
+      'popular': false,
+    },
+    // Add more services as needed
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final filteredServices = _services.where((service) {
+      final query = _searchQuery.toLowerCase();
+      return service['title'].toLowerCase().contains(query) ||
+          service['category'].toLowerCase().contains(query);
+    }).toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 8),
+          const Text(
+            'Our Services',
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _searchController,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Search services...',
+              prefixIcon: const Icon(Icons.search, color: Colors.pink),
+              filled: true,
+              fillColor: Colors.pink[50],
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 390,
+            child: PageView.builder(
+              itemCount: filteredServices.length,
+              controller: PageController(viewportFraction: 0.88),
+              itemBuilder: (context, index) {
+                final service = filteredServices[index];
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.pink[100]!),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.pink.withOpacity(0.07),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                        child: Stack(
+                          children: [
+                            Image.asset(
+                              service['image'],
+                              height: 140,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                            if (service['popular'])
+                              Positioned(
+                                top: 12,
+                                left: 12,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.pink,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Text(
+                                    'Popular',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(14.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    service['title'],
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    service['category'],
+                                    style: const TextStyle(
+                                        fontSize: 13, color: Colors.pink),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                service['description'],
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.black87),
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  const Icon(Icons.access_time,
+                                      size: 18, color: Colors.pink),
+                                  const SizedBox(width: 6),
+                                  Text('${service['duration']} min',
+                                      style: const TextStyle(fontSize: 14)),
+                                  const SizedBox(width: 18),
+                                  Text(
+                                      '₱${service['price'].toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.pink,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
+                                    textStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                    elevation: 0,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            BookAppointmentPage(
+                                                serviceData:
+                                                    Map<String, String>.from(
+                                                        service)),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Book Now'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
