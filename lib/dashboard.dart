@@ -121,7 +121,7 @@ class Dashboard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Upcoming Appointments',
+            "Today's Appointments",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

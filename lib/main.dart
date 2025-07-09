@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kderma_mobileapp/appointments.dart';
 import 'package:kderma_mobileapp/dashboard.dart';
 import 'package:kderma_mobileapp/profile.dart';
 import 'package:kderma_mobileapp/treatment.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) => Dashboard(),
         '/profile': (context) => ProfileScreen(),
         '/services': (context) => services.SkincareServicesSection(),
+        '/appointments': (context) => AppointmentPage(),
         '/treatment': (context) => TreatmentTimelineSection(),
         '/login': (context) => Login(),
         '/register': (context) => ClientRegistrationForm(),
