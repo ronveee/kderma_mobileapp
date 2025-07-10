@@ -8,18 +8,70 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-       debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       home: ProfileScreen(),
     );
   }
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileData {
+  String name;
+  String email;
+  String phone;
+  String address;
+  String birthday;
+  String memberSince;
+
+  ProfileData({
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.address,
+    required this.birthday,
+    required this.memberSince,
+  });
+}
+
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final ProfileData _profileData = ProfileData(
+    name: 'Daniel De Asis',
+    email: 'danieldeasis@example.com',
+    phone: '+1 (555) 123-4567',
+    address: 'Poblacion 5 Calacan City, Batangas',
+    birthday: 'January 15, 1990',
+    memberSince: '1/15/2024',
+  );
+
   void _showChangePasswordModal(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return ChangePasswordModal();
+      },
+    );
+  }
+
+  void _showEditProfileModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditProfileModal(
+          profileData: _profileData,
+          onProfileUpdated: (updatedData) {
+            setState(() {
+              _profileData.name = updatedData.name;
+              _profileData.email = updatedData.email;
+              _profileData.phone = updatedData.phone;
+              _profileData.address = updatedData.address;
+              _profileData.birthday = updatedData.birthday;
+            });
+          },
+        );
       },
     );
   }
@@ -125,7 +177,7 @@ class ProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Daniel De Asis',
+              _profileData.name,
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -133,7 +185,7 @@ class ProfileScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             Text(
-              'Member since 1/15/2024',
+              'Member since ${_profileData.memberSince}',
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
@@ -203,10 +255,10 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildPersonalInfoSection() {
     return Column(
       children: [
-        _buildInfoItem('Email', 'danieldeasis@example.com'),
-        _buildInfoItem('Phone', '+1 (555) 123-4567'),
-        _buildInfoItem('Address', 'Poblacion 5 Calacan City, Batangas'),
-        _buildInfoItem('Birthday', 'January 15, 1990'),
+        _buildInfoItem('Email', _profileData.email),
+        _buildInfoItem('Phone', _profileData.phone),
+        _buildInfoItem('Address', _profileData.address),
+        _buildInfoItem('Birthday', _profileData.birthday),
       ],
     );
   }
@@ -276,12 +328,14 @@ class ProfileScreen extends StatelessWidget {
         ),
         child: Text(
           'Edit Profile',
-          style: TextStyle(fontSize: 18,
-          color:Colors.white,
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
           ),
-          
         ),
-        onPressed: () {},
+        onPressed: () {
+          _showEditProfileModal(context);
+        },
       ),
     );
   }
@@ -496,6 +550,259 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Password changed successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Close the modal
+      Navigator.of(context).pop();
+    }
+  }
+}
+
+class EditProfileModal extends StatefulWidget {
+  final ProfileData profileData;
+  final Function(ProfileData) onProfileUpdated;
+
+  EditProfileModal({
+    required this.profileData,
+    required this.onProfileUpdated,
+  });
+
+  @override
+  _EditProfileModalState createState() => _EditProfileModalState();
+}
+
+class _EditProfileModalState extends State<EditProfileModal> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController _addressController;
+  late TextEditingController _birthdayController;
+  
+  bool _isLoading = false;
+  DateTime? _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.profileData.name);
+    _emailController = TextEditingController(text: widget.profileData.email);
+    _phoneController = TextEditingController(text: widget.profileData.phone);
+    _addressController = TextEditingController(text: widget.profileData.address);
+    _birthdayController = TextEditingController(text: widget.profileData.birthday);
+    
+    // Parse the existing birthday if it exists
+    try {
+      final parts = widget.profileData.birthday.split(' ');
+      if (parts.length == 3) {
+        final month = _getMonthNumber(parts[0]);
+        final day = int.parse(parts[1].replaceAll(',', ''));
+        final year = int.parse(parts[2]);
+        _selectedDate = DateTime(year, month, day);
+      }
+    } catch (e) {
+      print('Error parsing date: $e');
+    }
+  }
+
+  int _getMonthNumber(String monthName) {
+    return [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ].indexOf(monthName) + 1;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _birthdayController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Edit Profile Information',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink[800],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 24),
+                _buildTextField(_nameController, 'Full Name'),
+                SizedBox(height: 16),
+                _buildTextField(_emailController, 'Email', isEmail: true),
+                SizedBox(height: 16),
+                _buildTextField(_phoneController, 'Phone Number', isPhone: true),
+                SizedBox(height: 16),
+                _buildTextField(_addressController, 'Address'),
+                SizedBox(height: 16),
+                _buildDateField(),
+                SizedBox(height: 24),
+                _isLoading
+                    ? Center(child: CircularProgressIndicator(color: Colors.pink))
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pink,
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _submitForm,
+                        child: Text(
+                          'Save Changes',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.pink),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, {bool isEmail = false, bool isPhone = false}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      keyboardType: isEmail 
+          ? TextInputType.emailAddress 
+          : isPhone 
+              ? TextInputType.phone 
+              : TextInputType.text,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter $label';
+        }
+        if (isEmail && !value.contains('@')) {
+          return 'Please enter a valid email';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildDateField() {
+    return TextFormField(
+      controller: _birthdayController,
+      decoration: InputDecoration(
+        labelText: 'Birthday',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () => _selectDate(context),
+        ),
+      ),
+      readOnly: true,
+      onTap: () => _selectDate(context),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select your birthday';
+        }
+        return null;
+      },
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime(1990, 1, 15),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _birthdayController.text = 
+            "${_getMonthName(picked.month)} ${picked.day}, ${picked.year}";
+      });
+    }
+  }
+
+  String _getMonthName(int month) {
+    return [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ][month - 1];
+  }
+
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // Simulate API call
+      await Future.delayed(Duration(seconds: 2));
+
+      // Create updated profile data
+      final updatedData = ProfileData(
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
+        address: _addressController.text,
+        birthday: _birthdayController.text,
+        memberSince: widget.profileData.memberSince,
+      );
+
+      // Call the callback with updated data
+      widget.onProfileUpdated(updatedData);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Profile updated successfully!'),
           backgroundColor: Colors.green,
         ),
       );
