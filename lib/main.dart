@@ -8,7 +8,6 @@ import 'package:kderma_mobileapp/Login.dart';
 
 import 'ClientRegistrationForm.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -36,6 +35,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class NavItem {
   final IconData icon;
   final String label;
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
     Dashboard(), // Dashboard
     ProfileScreen(), // Profile
     services.SkincareServicesSection(), // Services
-    Center(child: Text('My Appointments')), // My Appointments
+    AppointmentPage(), // My Appointments (was Center(child: Text('My Appointments')))
     TreatmentTimelineSection(),
     Login()
   ];
