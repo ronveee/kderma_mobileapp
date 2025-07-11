@@ -33,7 +33,7 @@ class FeaturedServicesSection extends StatelessWidget {
       },
     ];
     return Padding(
-      padding: padding,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,11 +68,11 @@ class FeaturedServicesSection extends StatelessWidget {
             height: 320,
             child: PageView.builder(
               itemCount: cardData.length,
-              controller: PageController(viewportFraction: 0.88),
+              controller: PageController(viewportFraction: 0.95),
               itemBuilder: (context, index) {
                 final data = cardData[index];
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.zero,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.pink[100]!),
@@ -470,7 +470,7 @@ class _ServiceCard extends StatelessWidget {
 }
 
 class BookAppointmentPage extends StatefulWidget {
-  final Map<String, String> serviceData;
+  final Map<String, dynamic> serviceData;
   const BookAppointmentPage({super.key, required this.serviceData});
 
   @override
@@ -479,9 +479,15 @@ class BookAppointmentPage extends StatefulWidget {
 
 class _BookAppointmentPageState extends State<BookAppointmentPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
+  final List<Map<String, String>> _aestheticians = [
+    {'name': 'Daniel De Asis', 'avatar': 'assets/staff1.jpg'},
+    {'name': 'Ace Sinag', 'avatar': 'assets/staff2.jpg'},
+    {'name': 'George Adiz', 'avatar': 'assets/staff2.jpg'},
+    {'name': 'Maria Dela Cruz', 'avatar': ''},
+    {'name': 'Jenny Santos', 'avatar': ''},
+    {'name': 'Carla Mendoza', 'avatar': ''},
+  ];
+  String? selectedAesthetician;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
 
@@ -561,7 +567,32 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 8),
+              // Persuasive subtitle
+              const Text(
+                "Limited slots available – book your glow-up today!",
+                style: TextStyle(
+                  color: Colors.pink,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star, color: Colors.amber, size: 20),
+                  Icon(Icons.star_half, color: Colors.amber, size: 20),
+                  SizedBox(width: 8),
+                  Text('4.9',
+                      style: TextStyle(color: Colors.black54, fontSize: 15)),
+                ],
+              ),
+              const SizedBox(height: 18),
               Center(
                 child: Container(
                   padding: const EdgeInsets.all(20),
@@ -581,38 +612,39 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextFormField(
-                          controller: nameController,
+                        DropdownButtonFormField<String>(
+                          value: selectedAesthetician,
                           decoration: const InputDecoration(
-                            labelText: 'Name',
+                            labelText: 'Aesthetician',
                             border: OutlineInputBorder(),
                           ),
+                          items: _aestheticians.map((staff) {
+                            return DropdownMenuItem<String>(
+                              value: staff['name'],
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: staff['avatar']!.isNotEmpty
+                                        ? AssetImage(staff['avatar']!)
+                                        : null,
+                                    child: staff['avatar']!.isEmpty
+                                        ? Text(staff['name']![0])
+                                        : null,
+                                    radius: 14,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(staff['name']!),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedAesthetician = value;
+                            });
+                          },
                           validator: (value) => value == null || value.isEmpty
-                              ? 'Please enter your name'
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Please enter your email'
-                              : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: phoneController,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone Number',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.phone,
-                          validator: (value) => value == null || value.isEmpty
-                              ? 'Please enter your phone number'
+                              ? 'Please select an aesthetician'
                               : null,
                         ),
                         const SizedBox(height: 16),
@@ -655,7 +687,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             onPressed: submitForm,
-                            child: const Text('Submit'),
+                            child: const Text('Book Now'),
                           ),
                         ),
                       ],
@@ -748,6 +780,16 @@ class ServiceDetailsPage extends StatelessWidget {
                   Text('₱${serviceData['price'].toStringAsFixed(2)}',
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(width: 12),
+                  Row(
+                    children: [
+                      Icon(Icons.star, color: Colors.amber, size: 20),
+                      SizedBox(width: 2),
+                      Text('4.9',
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 15)),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 32),
@@ -764,8 +806,8 @@ class ServiceDetailsPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => BookAppointmentPage(
-                            serviceData: Map<String, String>.from(serviceData)),
+                        builder: (context) =>
+                            BookAppointmentPage(serviceData: serviceData),
                       ),
                     );
                   },
@@ -875,11 +917,11 @@ class _OurServicesSectionState extends State<OurServicesSection> {
             height: 390,
             child: PageView.builder(
               itemCount: filteredServices.length,
-              controller: PageController(viewportFraction: 0.88),
+              controller: PageController(viewportFraction: 0.95),
               itemBuilder: (context, index) {
                 final service = filteredServices[index];
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.zero,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(color: Colors.pink[100]!),
@@ -977,6 +1019,18 @@ class _OurServicesSectionState extends State<OurServicesSection> {
                                       style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold)),
+                                  const SizedBox(width: 10),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.star,
+                                          color: Colors.amber, size: 18),
+                                      SizedBox(width: 2),
+                                      Text('4.9',
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 14)),
+                                    ],
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 12),
@@ -1001,9 +1055,7 @@ class _OurServicesSectionState extends State<OurServicesSection> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             BookAppointmentPage(
-                                                serviceData:
-                                                    Map<String, String>.from(
-                                                        service)),
+                                                serviceData: service),
                                       ),
                                     );
                                   },
