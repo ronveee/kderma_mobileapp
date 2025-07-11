@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kderma_mobileapp/appointments.dart';
 
 class FeaturedServicesSection extends StatelessWidget {
   final EdgeInsetsGeometry padding;
@@ -522,6 +523,25 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     if (_formKey.currentState!.validate() &&
         selectedDate != null &&
         selectedTime != null) {
+      // Add appointment to store
+      final DateTime appointmentDateTime = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+        selectedTime!.hour,
+        selectedTime!.minute,
+      );
+      final appointment = Appointment(
+        clientName: 'Client', // Replace with actual client name if available
+        service: widget.serviceData['title'] ?? 'Service',
+        dateTime: appointmentDateTime,
+        durationMinutes:
+            int.tryParse(widget.serviceData['duration']?.toString() ?? '') ??
+                30,
+        status: 'Confirmed',
+        staffName: selectedAesthetician,
+      );
+      AppointmentStore().add(appointment);
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -529,7 +549,10 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
           content: const Text('Your appointment has been booked successfully!'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Go back to previous screen
+              },
               child: const Text('OK'),
             ),
           ],
