@@ -58,15 +58,28 @@ class AppointmentPage extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: appointments.isEmpty
-                      ? const Center(child: Text("No appointments yet."))
-                      : ListView.builder(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Upcoming Appointments",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "${appointments.length} appointment${appointments.length == 1 ? '' : 's'} scheduled for 2025",
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 12), // Optional spacing
+                      Expanded( // Wrap in Expanded to avoid unbounded height error
+                        child: appointments.isEmpty
+                            ? const Center(child: Text("No appointments yet."))
+                            : ListView.builder(
                           itemCount: appointments.length,
                           itemBuilder: (context, index) {
                             final appt = appointments[index];
                             return appointmentCard(
-                              name: (appt.staffName != null &&
-                                      appt.staffName!.isNotEmpty)
+                              name: (appt.staffName != null && appt.staffName!.isNotEmpty)
                                   ? appt.staffName!
                                   : 'Aesthetician',
                               time: _formatDateTime(appt.dateTime),
@@ -76,6 +89,9 @@ class AppointmentPage extends StatelessWidget {
                             );
                           },
                         ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -149,7 +165,7 @@ Widget appointmentCard({
     ),
     child: Row(
       children: [
-        Icon(Icons.person, color: Colors.pink[300]),
+        Icon(Icons.calendar_month, color: Colors.pink[300]),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -183,7 +199,7 @@ Widget appointmentCard({
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.orange,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(

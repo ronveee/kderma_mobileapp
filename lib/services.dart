@@ -538,7 +538,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
         durationMinutes:
             int.tryParse(widget.serviceData['duration']?.toString() ?? '') ??
                 30,
-        status: 'Confirmed',
+        status: 'Pending',
         staffName: selectedAesthetician,
       );
       AppointmentStore().add(appointment);
