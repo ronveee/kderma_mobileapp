@@ -9,59 +9,66 @@ class TreatmentTimelineSection extends StatefulWidget {
 }
 
 class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
-  final List<Map<String, String>> _allTreatments = [
+  final List<Map<String, dynamic>> _allTreatments = [
     {
       'treatmentName': 'Laser Hair Removal',
       'date': 'April 20, 2025',
       'status': 'Completed',
       'type': 'Laser',
-      'aesthetician': 'Daniel De Asis'
+      'aesthetician': 'Daniel De Asis',
+      'improvementPercentage': 85
     },
     {
       'treatmentName': 'Chemical Peel',
       'date': 'May 15, 2025',
       'status': 'Completed',
       'type': 'Peel',
-      'aesthetician': 'Daniel De Asis'
+      'aesthetician': 'Daniel De Asis',
+      'improvementPercentage': 92
     },
     {
       'treatmentName': 'Facial Treatment',
       'date': 'June 27, 2025',
       'status': 'Completed',
       'type': 'Facial',
-      'aesthetician': 'Daniel De Asis'
+      'aesthetician': 'Daniel De Asis',
+      'improvementPercentage': 78
     },
     {
       'treatmentName': 'Acne Therapy',
       'date': 'July 5, 2025',
       'status': 'Completed',
       'type': 'Acne',
-      'aesthetician': 'Daniel De Asis'
+      'aesthetician': 'Daniel De Asis',
+      'improvementPercentage': 88
     },
     {
       'treatmentName': 'Microdermabrasion',
       'date': 'August 10, 2025',
       'status': 'Completed',
       'type': 'Exfoliation',
-      'aesthetician': 'Daniel De Asis'
+      'aesthetician': 'Daniel De Asis',
+      'improvementPercentage': 75
     },
     {
       'treatmentName': 'Microdermabrasion',
       'date': 'August 10, 2025',
       'status': 'Completed',
       'type': 'Exfoliation',
-      'aesthetician': 'Ace Sinag'
+      'aesthetician': 'Ace Sinag',
+      'improvementPercentage': 82
     },
     {
       'treatmentName': 'Microdermabrasion',
       'date': 'August 10, 2025',
       'status': 'Completed',
       'type': 'Exfoliation',
-      'aesthetician': 'Ace Sinag'
+      'aesthetician': 'Ace Sinag',
+      'improvementPercentage': 79
     },
   ];
 
-  List<Map<String, String>> _filteredTreatments = [];
+  List<Map<String, dynamic>> _filteredTreatments = [];
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -175,6 +182,7 @@ class _TreatmentTimelineSectionState extends State<TreatmentTimelineSection> {
                             status: treatment['status']!,
                             type: treatment['type']!,
                             aesthetician: treatment['aesthetician']!,
+                            improvementPercentage: treatment['improvementPercentage'] as int,
                             beforeImage:
                                 _getBeforeImage(treatment['treatmentName']!),
                             afterImage:
@@ -311,6 +319,7 @@ class TreatmentTimelineItem extends StatefulWidget {
   final String status;
   final String type;
   final String aesthetician;
+  final int improvementPercentage;
   final String? beforeImage;
   final String? afterImage;
 
@@ -321,6 +330,7 @@ class TreatmentTimelineItem extends StatefulWidget {
     required this.status,
     required this.type,
     required this.aesthetician,
+    required this.improvementPercentage,
     this.beforeImage,
     this.afterImage,
   }) : super(key: key);
@@ -411,19 +421,50 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                 Text('Aesthetician: ${widget.aesthetician}',
                     style: TextStyle(color: Colors.blueGrey[700])),
                 const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    widget.status,
-                    style: TextStyle(
-                      color: Colors.green[800],
-                      fontWeight: FontWeight.bold,
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        widget.status,
+                        style: TextStyle(
+                          color: Colors.green[800],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.pink[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.trending_up,
+                            size: 16,
+                            color: Colors.pink[800],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${widget.improvementPercentage}%',
+                            style: TextStyle(
+                              color: Colors.pink[800],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -456,19 +497,53 @@ class _TreatmentTimelineItemState extends State<TreatmentTimelineItem> {
                   Text('Type: ${widget.type}'),
                   Text('Aesthetician: ${widget.aesthetician}'),
                   const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.green[100],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      widget.status,
-                      style: TextStyle(
-                        color: Colors.green[800],
-                        fontWeight: FontWeight.bold,
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.green[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          widget.status,
+                          style: TextStyle(
+                            color: Colors.green[800],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.pink[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.trending_up,
+                              size: 18,
+                              color: Colors.pink[800],
+                            ),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                'Skin Improvement: ${widget.improvementPercentage}%',
+                                style: TextStyle(
+                                  color: Colors.pink[800],
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                   // --- Before & After Dropdown Section ---
